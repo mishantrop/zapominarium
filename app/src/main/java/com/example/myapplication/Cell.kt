@@ -41,8 +41,6 @@ class Cell {
     }
 
     public fun render() {
-        this.button?.isEnabled = !this.isVisible
-
         if (this.isVisible) {
             this.button?.text = this.char
         } else {
