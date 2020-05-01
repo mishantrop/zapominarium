@@ -5,26 +5,64 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+    <LinearLayout
+        android:background="@color/backgroundLight"
+        android:id="@+id/activity_main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <androidx.gridlayout.widget.GridLayout
-        android:id="@+id/activity_main_grid"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="#ffffff"
-        android:visibility="visible"
-        app:columnCount="3"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:rowCount="3"
-        tools:visibility="visible">
-    </androidx.gridlayout.widget.GridLayout>
+        <androidx.gridlayout.widget.GridLayout
+            android:id="@+id/activity_main_grid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|center_horizontal|center_vertical"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible"></androidx.gridlayout.widget.GridLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="bottom|center"
+            android:orientation="horizontal">
+
+            <TableLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" >
+
+                    <Button
+                        android:id="@+id/buttonDecreaseComplexity"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="👶 Проще" />
+
+                    <Button
+                        android:id="@+id/buttonIncreaseComplexity"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="👴 Сложнее" />
+
+                    <Button
+                        android:id="@+id/buttonToggleTheme"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="👴 Сменить тему" />
+                </TableRow>
+            </TableLayout>
+        </LinearLayout>
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
