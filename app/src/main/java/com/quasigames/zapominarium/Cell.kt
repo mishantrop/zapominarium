@@ -1,4 +1,4 @@
-package com.puregames.zapominarium
+package com.quasigames.zapominarium
 
 import android.widget.Button
 
@@ -8,6 +8,7 @@ class Cell {
     private var char: String? = null
     private var isMatched = false
     private var isVisible = false
+    private var clickCount = 0
 
     constructor(
       id: Int,
@@ -18,6 +19,7 @@ class Cell {
         this.button = button
         this.button?.setOnClickListener {
             if (!this.isVisible) {
+                this.clickCount++
                 onClick(this.id!!)
             }
         }
@@ -52,23 +54,13 @@ class Cell {
         this.render()
     }
 
-    public fun show() {
-        this.isVisible = true
-        this.render()
-    }
-
-    public fun match() {
+    public fun setMatched() {
         this.isMatched = true
         this.render()
     }
 
-    private fun unmatch() {
-        this.isMatched = false
+    public fun show() {
+        this.isVisible = true
         this.render()
-    }
-
-    public fun reset() {
-        this.unmatch()
-        this.hide()
     }
 }

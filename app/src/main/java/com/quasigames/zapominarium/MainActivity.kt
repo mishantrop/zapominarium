@@ -1,4 +1,4 @@
-package com.puregames.zapominarium
+package com.quasigames.zapominarium
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -22,12 +22,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         this.fieldGrid = findViewById<GridLayout>(R.id.activity_main_grid)
 
-        var initialWidth = 5
-        var initialHeight = 6
+        var initialWidth = 4
+        var initialHeight = 4
         val field = Field()
         val buttonToggleTheme = findViewById<Button>(R.id.buttonToggleTheme)
         val buttonDecreaseComplexity = findViewById<Button>(R.id.buttonDecreaseComplexity)
         val buttonIncreaseComplexity = findViewById<Button>(R.id.buttonIncreaseComplexity)
+        val mainLayout = findViewById<LinearLayout>(R.id.activity_main_layout)
+
         buttonDecreaseComplexity.setOnClickListener {
             field.decreaseComplexity()
         }
@@ -37,7 +39,6 @@ class MainActivity : AppCompatActivity() {
 
         buttonToggleTheme.setOnClickListener {
             this.isDarkMode = !this.isDarkMode
-            val mainLayout = findViewById<LinearLayout>(R.id.activity_main_layout)
 
             if (this.isDarkMode) {
                 mainLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.backgroundDark))

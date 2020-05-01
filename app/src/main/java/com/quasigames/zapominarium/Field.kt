@@ -1,10 +1,12 @@
-package com.puregames.zapominarium
+package com.quasigames.zapominarium
 
 import android.content.Context
+import android.content.res.Resources
 import android.os.Handler
 import android.widget.Button
 import android.widget.Toast
 import androidx.gridlayout.widget.GridLayout
+
 
 class Field {
     private var isEnabled = true
@@ -12,12 +14,12 @@ class Field {
     private var successToast: Toast? = null
     private var width: Int? = null
     private var height: Int? = null
-    private var maxWidth = 5
+    private var maxWidth = 6
     private var maxHeight = 8
     private val matchTargetCount = 2
     private var context: Context? = null
     private val cells = mutableMapOf<Int, Cell>()
-    private val emojies = arrayOf(
+    private val emojies = mutableListOf<String>(
         "\uD83D\uDC7D", // 👽 Alien
         "\uD83D\uDC3B", // 🐻 Bear
         "\uD83D\uDCA3", // 💣 Bomb
@@ -38,6 +40,9 @@ class Field {
         "\uD83C\uDF4E", // 🍎 Red Apple
         "\uD83C\uDF85", // 🎅 Santa Claus
         "\uD83C\uDF81", // 🎁 Wrapped Gift
+        "\uD83C\uDF0B", // 🌋 Volcano
+        "\uD83C\uDFE0", // 🏠 House
+        "\uD83D\uDDFF", // 🗿 Moai
         "\uD83D\uDC3A"  // 🐺 Wolf
     )
 
@@ -53,7 +58,6 @@ class Field {
         if (width > this.maxWidth || height > this.maxHeight) {
             throw Exception("Maximum size: ${this.maxWidth}x${this.maxHeight}")
         }
-
 
         this.width = width
         this.height = height
@@ -113,6 +117,7 @@ class Field {
 
     private fun getChars(pairsCount: Int): MutableList<String> {
         val chars = mutableListOf<String>()
+        this.emojies.shuffle()
         val pairsLastIndex = pairsCount - 1
         for (i in 0..pairsLastIndex) {
             chars.add(this.emojies[i])
@@ -128,6 +133,14 @@ class Field {
 
         var cellId = 1;
 
+        val screenWidthPx = Resources.getSystem().displayMetrics.widthPixels;
+        val screenHeightPx = Resources.getSystem().displayMetrics.heightPixels;
+        val buttonWidth = (screenWidthPx / this.maxWidth!!) - 50
+        var buttonHeight = (screenHeightPx / this.maxHeight!!) - 50
+        if (buttonHeight > buttonWidth) {
+            buttonHeight = buttonWidth
+        }
+
         for (w in 1..this.width!!) {
             for (h in 1..this.height!!) {
                 var button = Button(this.context)
@@ -138,6 +151,7 @@ class Field {
                 )
                 this.cells[cellId] = cell
                 this.grid?.addView(button)
+                button.layoutParams.width = buttonWidth
                 cellId++
             }
         }
@@ -160,7 +174,7 @@ class Field {
             val isMatched = openedCellsChars.size == 1
             if (isMatched) {
                 for ((_, cell) in openedCells) {
-                    cell.match()
+                    cell.setMatched()
                 }
             } else {
                 this.disable()
@@ -176,9 +190,17 @@ class Field {
 
         val matchedCells = this.cells.filter { (_, cell) -> cell.isMatched() }
         if (matchedCells.size == this.cells.size) {
+            this.disable()
             this.successToast?.show()
-            this.reset()
-            this.render()
+            Handler().postDelayed(
+                {
+                    this.reset()
+                    this.enable()
+                    this.render()
+                },
+                1000
+            )
+
         }
     }
 
@@ -203,7 +225,8 @@ class Field {
     }
 
     private fun initChars() {
-        val chars = this.getChars((this.width!! * this.height!!) / 2)
+        val pairsCount = (this.width!! * this.height!!) / 2
+        val chars = this.getChars(pairsCount)
         var charIndex = 0;
         for ((_, cell) in this.cells) {
             cell.setChar(chars[charIndex])
