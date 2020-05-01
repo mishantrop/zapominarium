@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.puregames.zapominarium
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

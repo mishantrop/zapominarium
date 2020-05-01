@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.puregames.zapominarium
 
 import org.junit.Test
 

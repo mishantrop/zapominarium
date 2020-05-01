@@ -1,6 +1,5 @@
-package com.example.myapplication
+package com.puregames.zapominarium
 
-import android.content.Context
 import android.widget.Button
 
 class Cell {
