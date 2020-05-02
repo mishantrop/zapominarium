@@ -18,18 +18,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center|center_horizontal|center_vertical"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginBottom="0dp"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="visible"></androidx.gridlayout.widget.GridLayout>
+            android:verticalSpacing="0dp"
+            android:horizontalSpacing="0dp"
+            android:stretchMode="columnWidth"
+            tools:visibility="visible">
+        </androidx.gridlayout.widget.GridLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -38,12 +42,13 @@
             android:orientation="horizontal">
 
             <TableLayout
+                android:id="@+id/activity_main_toolbar"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content">
 
                 <TableRow
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" >
+                    android:layout_height="wrap_content">
 
                     <Button
                         android:id="@+id/buttonDecreaseComplexity"
@@ -56,12 +61,6 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:text="👴 Сложнее" />
-
-                    <Button
-                        android:id="@+id/buttonToggleTheme"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:text="🎨 Сменить тему" />
                 </TableRow>
             </TableLayout>
         </LinearLayout>

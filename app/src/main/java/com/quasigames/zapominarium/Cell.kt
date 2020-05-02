@@ -25,6 +25,12 @@ class Cell {
         }
     }
 
+    public fun setSize(width: Int, height: Int) {
+        this.button?.layoutParams?.width = width
+        this.button?.layoutParams?.height = height
+        this.button?.setPadding(0,0,0,0)
+    }
+
     public fun isMatched(): Boolean {
         return this.isMatched
     }

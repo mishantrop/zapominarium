@@ -7,31 +7,43 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.gridlayout.widget.GridLayout
 
-
 class Field {
-    private var isEnabled = true
+    private var context: Context? = null
     private var grid: GridLayout? = null
     private var successToast: Toast? = null
+
+    private var maxWidth = 8
+    private var maxHeight = 8
+    private var viewportHeight = 0
+    private var viewportWidth = 0
     private var width: Int? = null
     private var height: Int? = null
-    private var maxWidth = 6
-    private var maxHeight = 8
+
+    private var isEnabled = true
     private val matchTargetCount = 2
-    private var context: Context? = null
     private val cells = mutableMapOf<Int, Cell>()
-    private val emojies = mutableListOf<String>(
+    private val emojis = mutableListOf<String>(
         "\uD83D\uDC7D", // 👽 Alien
         "\uD83D\uDC3B", // 🐻 Bear
         "\uD83D\uDCA3", // 💣 Bomb
         "\uD83D\uDC31", // 🐱 Cat
+        "\uD83D\uDC2E", // 🐮 Cow Face
         "\uD83D\uDC36", // 🐶 Dog
         "\uD83D\uDC2C", // 🐬 Dolphin
         "\uD83D\uDC32", // 🐲 Dragon
+        "\uD83D\uDC18", // 🐘 Elephant
         "\uD83D\uDD25", // 🔥 Fire
+        "\uD83C\uDF40", // 🍀 Four Leaf Clover
+        "\uD83D\uDC38", // 🐸 Frog
         "\uD83D\uDC8E", // 💎 Gem Stone
         "\uD83C\uDF1F", // 🌟 Glowing Star
         "\uD83D\uDC1D", // 🐝 Honeybee
+        "\uD83D\uDC0E", // 🐎 Horse
+        "\uD83C\uDFE0", // 🏠 House
         "\uD83C\uDF83", // 🎃 Jack-O-Lantern
+        "\uD83D\uDC1E", // 🐞 Lady Beetle
+        "\uD83D\uDDFF", // 🗿 Moai
+        "\uD83D\uDC35", // 🐵 Monkey Face
         "\uD83D\uDC27", // 🐧 Octopus
         "\uD83D\uDC79", // 👹 Ogre
         "\uD83D\uDC3C", // 🐼 Panda
@@ -39,18 +51,17 @@ class Field {
         "\uD83C\uDF08", // 🌈 Rainbow
         "\uD83C\uDF4E", // 🍎 Red Apple
         "\uD83C\uDF85", // 🎅 Santa Claus
-        "\uD83C\uDF81", // 🎁 Wrapped Gift
+        "\uD83D\uDC22", // 🐢 Turtle
         "\uD83C\uDF0B", // 🌋 Volcano
-        "\uD83C\uDFE0", // 🏠 House
-        "\uD83D\uDDFF", // 🗿 Moai
-        "\uD83D\uDC3A"  // 🐺 Wolf
+        "\uD83D\uDC3A", // 🐺 Wolf
+        "\uD83C\uDF81"  // 🎁 Wrapped Gift
     )
 
-    public fun init(context: Context, grid: GridLayout, width: Int, height: Int) {
+    fun init(context: Context, grid: GridLayout, width: Int, height: Int) {
         this.context = context
         val pairsCount = (width * height) / this.matchTargetCount
-        if (pairsCount > this.emojies.size) {
-            throw Exception("I do not have emojies enough (${this.emojies.size}) to create $pairsCount pairs")
+        if (pairsCount > this.emojis.size) {
+            throw Exception("I do not have emojis enough (total: ${this.emojis.size}) to create $pairsCount pairs")
         }
         if (width % this.matchTargetCount > 0 && height % this.matchTargetCount > 0) {
             throw Exception("Count of cells must be even")
@@ -73,7 +84,7 @@ class Field {
         this.render()
     }
 
-    public fun decreaseComplexity() {
+    fun decreaseComplexity() {
         var width = this.width!!
         var height = this.height!!
 
@@ -94,7 +105,7 @@ class Field {
         this.init(this.context!!, this.grid!!, width, height)
     }
 
-    public fun increaseComplexity() {
+    fun increaseComplexity() {
         var width = this.width!!
         var height = this.height!!
 
@@ -115,16 +126,47 @@ class Field {
         this.init(this.context!!, this.grid!!, width, height)
     }
 
+    fun setViewportSize(width: Int, height: Int) {
+        this.viewportWidth = width
+        this.viewportHeight = height
+
+        this.calcButtonsSize()
+    }
+
+    private fun calcButtonsSize() {
+        val screenWidthPx = Resources.getSystem().displayMetrics.widthPixels
+        val buttonWidth = screenWidthPx / this.width!!
+        val buttonHeight = this.viewportHeight / this.height!!
+        for ((_, cell) in this.cells) {
+            cell.setSize(buttonWidth, buttonHeight)
+        }
+    }
+
+    private fun disable() {
+        this.isEnabled = false
+    }
+
+    private fun enable() {
+        this.isEnabled = true
+    }
+
     private fun getChars(pairsCount: Int): MutableList<String> {
         val chars = mutableListOf<String>()
-        this.emojies.shuffle()
+        this.emojis.shuffle()
         val pairsLastIndex = pairsCount - 1
         for (i in 0..pairsLastIndex) {
-            chars.add(this.emojies[i])
-            chars.add(this.emojies[i])
+            chars.add(this.emojis[i])
+            chars.add(this.emojis[i])
         }
         chars.shuffle()
         return chars
+    }
+
+    private fun hideUnmatchedCells() {
+        val unmatchedCells = this.cells.filter { (_, cell) -> !cell.isMatched() }
+        for ((_, cell) in unmatchedCells) {
+            cell.hide()
+        }
     }
 
     private fun initCells() {
@@ -132,15 +174,6 @@ class Field {
         this.cells.clear()
 
         var cellId = 1;
-
-        val screenWidthPx = Resources.getSystem().displayMetrics.widthPixels;
-        val screenHeightPx = Resources.getSystem().displayMetrics.heightPixels;
-        val buttonWidth = (screenWidthPx / this.maxWidth!!) - 50
-        var buttonHeight = (screenHeightPx / this.maxHeight!!) - 50
-        if (buttonHeight > buttonWidth) {
-            buttonHeight = buttonWidth
-        }
-
         for (w in 1..this.width!!) {
             for (h in 1..this.height!!) {
                 var button = Button(this.context)
@@ -151,12 +184,22 @@ class Field {
                 )
                 this.cells[cellId] = cell
                 this.grid?.addView(button)
-                button.layoutParams.width = buttonWidth
                 cellId++
             }
         }
 
         this.initChars()
+        this.calcButtonsSize()
+    }
+
+    private fun initChars() {
+        val pairsCount = (this.width!! * this.height!!) / 2
+        val chars = this.getChars(pairsCount)
+        var charIndex = 0;
+        for ((_, cell) in this.cells) {
+            cell.setChar(chars[charIndex])
+            charIndex++
+        }
     }
 
     private fun onCellClick(cellId: Int) {
@@ -204,19 +247,9 @@ class Field {
         }
     }
 
-    private fun disable() {
-        this.isEnabled = false
-    }
-
-    private fun enable() {
-        this.isEnabled = true
-    }
-
-    private fun showCell(cellId: Int) {
-        for ((id, cell) in this.cells) {
-            if (id == cellId) {
-                cell.show()
-            }
+    private fun render() {
+        for ((_, cell) in this.cells) {
+            cell.render()
         }
     }
 
@@ -224,26 +257,11 @@ class Field {
         this.initCells()
     }
 
-    private fun initChars() {
-        val pairsCount = (this.width!! * this.height!!) / 2
-        val chars = this.getChars(pairsCount)
-        var charIndex = 0;
-        for ((_, cell) in this.cells) {
-            cell.setChar(chars[charIndex])
-            charIndex++
-        }
-    }
-
-    private fun render() {
-        for ((_, cell) in this.cells) {
-            cell.render()
-        }
-    }
-
-    private fun hideUnmatchedCells() {
-        val unmatchedCells = this.cells.filter { (_, cell) -> !cell.isMatched() }
-        for ((_, cell) in unmatchedCells) {
-            cell.hide()
+    private fun showCell(cellId: Int) {
+        for ((id, cell) in this.cells) {
+            if (id == cellId) {
+                cell.show()
+            }
         }
     }
 }
