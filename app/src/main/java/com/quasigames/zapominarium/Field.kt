@@ -84,48 +84,6 @@ class Field {
         this.render()
     }
 
-    fun decreaseComplexity() {
-        var width = this.width!!
-        var height = this.height!!
-
-        if (width % 2 != 0) {
-            width--
-        } else if (height % 2 != 0) {
-            height--
-        } else if (height > width) {
-            height--
-        } else {
-            width--
-        }
-
-        if (width <= 0 || height <= 0) {
-            return
-        }
-
-        this.init(this.context!!, this.grid!!, width, height)
-    }
-
-    fun increaseComplexity() {
-        var width = this.width!!
-        var height = this.height!!
-
-        if (width % 2 != 0 && width < this.maxWidth) {
-            width++
-        } else if (height % 2 != 0 && height < this.maxHeight) {
-            height++
-        } else if (height > width) {
-            width++
-        } else {
-            height++
-        }
-
-        if (width > this.maxWidth || height > this.maxHeight) {
-            return
-        }
-
-        this.init(this.context!!, this.grid!!, width, height)
-    }
-
     fun setViewportSize(width: Int, height: Int) {
         this.viewportWidth = width
         this.viewportHeight = height
@@ -263,5 +221,25 @@ class Field {
                 cell.show()
             }
         }
+    }
+
+    fun setSize(width: Int, height: Int) {
+        this.init(this.context!!, this.grid!!, width, height)
+    }
+
+    fun getWidth(): Int {
+        return this.width!!
+    }
+
+    fun getHeight(): Int {
+        return this.height!!
+    }
+
+    fun getMaxWidth(): Int {
+        return this.maxWidth!!
+    }
+
+    fun getMaxHeight(): Int {
+        return this.maxHeight!!
     }
 }

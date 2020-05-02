@@ -14,6 +14,7 @@ class MainActivity : AppCompatActivity() {
     private var fieldGrid: GridLayout? = null
     private var isDarkMode = false
     private val field = Field()
+    private val gameplay = Gameplay()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         this.fieldGrid = findViewById<GridLayout>(R.id.activity_main_grid)
 
-        var initialWidth = 4
+        var initialWidth = 3
         var initialHeight = 4
         val buttonDecreaseComplexity = findViewById<Button>(R.id.buttonDecreaseComplexity)
         val buttonIncreaseComplexity = findViewById<Button>(R.id.buttonIncreaseComplexity)
@@ -31,10 +32,10 @@ class MainActivity : AppCompatActivity() {
         val mainLayoutToolbar = findViewById<LinearLayout>(R.id.activity_main_toolbar)
 
         buttonDecreaseComplexity.setOnClickListener {
-            this.field.decreaseComplexity()
+            this.gameplay.decreaseComplexity()
         }
         buttonIncreaseComplexity.setOnClickListener {
-            this.field.increaseComplexity()
+            this.gameplay.increaseComplexity()
         }
 
         try {
@@ -42,6 +43,7 @@ class MainActivity : AppCompatActivity() {
             this.fieldGrid?.rowCount = initialHeight
 
             this.field.init(this, this.fieldGrid!!, initialWidth, initialHeight)
+            this.gameplay.init(this.field)
 
             val vto: ViewTreeObserver = mainLayoutToolbar.viewTreeObserver
             vto.addOnGlobalLayoutListener {
