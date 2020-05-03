@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
 
         setContentView(R.layout.activity_main)
-        this.fieldGrid = findViewById<GridLayout>(R.id.activity_main_grid)
+        fieldGrid = findViewById(R.id.activity_main_grid)
 
         var initialWidth = 3
         var initialHeight = 4
@@ -32,24 +32,26 @@ class MainActivity : AppCompatActivity() {
         val mainLayoutToolbar = findViewById<LinearLayout>(R.id.activity_main_toolbar)
 
         buttonDecreaseComplexity.setOnClickListener {
-            this.gameplay.decreaseComplexity()
+            gameplay.decreaseComplexity()
         }
         buttonIncreaseComplexity.setOnClickListener {
-            this.gameplay.increaseComplexity()
+            gameplay.increaseComplexity()
         }
 
         try {
-            this.fieldGrid?.columnCount = initialWidth
-            this.fieldGrid?.rowCount = initialHeight
+            fieldGrid?.columnCount = initialWidth
+            fieldGrid?.rowCount = initialHeight
 
-            this.field.init(this, this.fieldGrid!!, initialWidth, initialHeight)
-            this.gameplay.init(this.field)
+            field.maxWidth = 8
+            field.maxHeight = 8
+            field.init(this, fieldGrid!!, initialWidth, initialHeight)
+            gameplay.init(field)
 
             val vto: ViewTreeObserver = mainLayoutToolbar.viewTreeObserver
             vto.addOnGlobalLayoutListener {
                 val mainLayoutToolbarHeight = mainLayoutToolbar.height
-                val actionbarHeight = this.getActionbarHeight()
-                this.field.setViewportSize(0, mainLayout.height - mainLayoutToolbarHeight - actionbarHeight)
+                val actionbarHeight = getActionbarHeight()
+                field.setViewportSize(0, mainLayout.height - mainLayoutToolbarHeight - actionbarHeight)
             }
         } catch (error: Exception) {
             val errorToast = Toast.makeText(this, error.message, Toast.LENGTH_LONG)
@@ -60,9 +62,9 @@ class MainActivity : AppCompatActivity() {
     private fun toggleTheme() {
         val mainLayout = findViewById<LinearLayout>(R.id.activity_main_layout)
 
-        this.isDarkMode = !this.isDarkMode
+        isDarkMode = !isDarkMode
 
-        if (this.isDarkMode) {
+        if (isDarkMode) {
             mainLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.backgroundDark))
         } else {
             mainLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.backgroundLight))
@@ -88,7 +90,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_toggle_theme -> {
-                this.toggleTheme()
+                toggleTheme()
                 true
             }
             else -> super.onOptionsItemSelected(item)

@@ -8,8 +8,8 @@ class Gameplay {
   }
 
   fun decreaseComplexity() {
-    var width = this.field?.getWidth()
-    var height = this.field?.getHeight()
+    var width = field?.width
+    var height = field?.height
 
     if (width!! % 2 != 0) {
       width--
@@ -25,14 +25,14 @@ class Gameplay {
       return
     }
 
-    this.field?.setSize(width, height)
+    field?.setSize(width, height)
   }
 
   fun increaseComplexity() {
-    var width = this.field?.getWidth()
-    var height = this.field?.getHeight()
-    var maxWidth = this.field?.getMaxWidth()
-    var maxHeight = this.field?.getMaxHeight()
+    var width = field?.width!!
+    var height = field?.height!!
+    var maxWidth = field?.maxWidth
+    var maxHeight = field?.maxHeight
 
     if (width!! % 2 != 0 && width!! < maxWidth!!) {
       width++
@@ -48,6 +48,6 @@ class Gameplay {
       return
     }
 
-    this.field?.setSize(width, height!!)
+    field?.setSize(width, height!!)
   }
 }
