@@ -3,11 +3,11 @@ package com.quasigames.zapominarium
 import android.widget.Button
 
 class Cell {
+    var char: String? = null
+    var isMatched = false
+    var isVisible = false
     private var id: Int? = null
     private var button: Button? = null
-    private var char: String? = null
-    private var isMatched = false
-    private var isVisible = false
     private var clickCount = 0
 
     constructor(
@@ -18,55 +18,39 @@ class Cell {
         this.id = id
         this.button = button
         this.button?.setOnClickListener {
-            if (!this.isVisible) {
-                this.clickCount++
+            if (!isVisible) {
+                clickCount++
                 onClick(this.id!!)
             }
         }
     }
 
-    public fun setSize(width: Int, height: Int) {
-        this.button?.layoutParams?.width = width
-        this.button?.layoutParams?.height = height
-        this.button?.setPadding(0,0,0,0)
+    fun hide() {
+        isVisible = false
+        render()
     }
 
-    public fun isMatched(): Boolean {
-        return this.isMatched
-    }
-
-    public fun isVisible(): Boolean {
-        return this.isVisible
-    }
-
-    public fun getChar(): String {
-        return this.char!!
-    }
-
-    public fun setChar(char: String) {
-        this.char = char
-    }
-
-    public fun render() {
-        if (this.isVisible) {
-            this.button?.text = this.char
+    fun render() {
+        if (isVisible) {
+            button?.text = char
         } else {
-            this.button?.text = "❓"
+            button?.text = "❓"
         }
     }
 
-    public fun hide() {
-        this.isVisible = false
-        this.render()
+    fun setMatched() {
+        isMatched = true
+        render()
     }
 
-    public fun setMatched() {
-        this.isMatched = true
-        this.render()
+    fun setSize(width: Int, height: Int) {
+        button?.layoutParams?.width = width
+        button?.layoutParams?.height = height
+        button?.setPadding(0,0,0,0)
     }
 
-    public fun show() {
-        this.isVisible = true
-        this.render()
+    fun show() {
+        isVisible = true
+        render()
     }
 }

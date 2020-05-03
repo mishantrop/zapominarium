@@ -12,17 +12,17 @@ class Field {
     private var grid: GridLayout? = null
     private var successToast: Toast? = null
 
-    private var maxWidth = 8
-    private var maxHeight = 8
+    var maxWidth: Int = 8
+    var maxHeight: Int = 8
     private var viewportHeight = 0
     private var viewportWidth = 0
-    private var width: Int? = null
-    private var height: Int? = null
+    var width: Int? = null
+    var height: Int? = null
 
     private var isEnabled = true
     private val matchTargetCount = 2
     private val cells = mutableMapOf<Int, Cell>()
-    private val emojis = mutableListOf<String>(
+    private val emojis = mutableListOf(
         "\uD83D\uDC7D", // 👽 Alien
         "\uD83D\uDC3B", // 🐻 Bear
         "\uD83D\uDCA3", // 💣 Bomb
@@ -59,117 +59,109 @@ class Field {
 
     fun init(context: Context, grid: GridLayout, width: Int, height: Int) {
         this.context = context
-        val pairsCount = (width * height) / this.matchTargetCount
-        if (pairsCount > this.emojis.size) {
-            throw Exception("I do not have emojis enough (total: ${this.emojis.size}) to create $pairsCount pairs")
+        val pairsCount = (width * height) / matchTargetCount
+        if (pairsCount > emojis.size) {
+            throw Exception("I do not have emojis enough (total: ${emojis.size}) to create $pairsCount pairs")
         }
-        if (width % this.matchTargetCount > 0 && height % this.matchTargetCount > 0) {
+        if (width % matchTargetCount > 0 && height % matchTargetCount > 0) {
             throw Exception("Count of cells must be even")
         }
-        if (width > this.maxWidth || height > this.maxHeight) {
-            throw Exception("Maximum size: ${this.maxWidth}x${this.maxHeight}")
+        if (width > maxWidth!! || height > maxHeight!!) {
+            throw Exception("Maximum size: ${maxWidth}x${maxHeight}")
         }
 
         this.width = width
         this.height = height
 
-        this.successToast = Toast.makeText(this.context!!, "Ты молодец \uD83C\uDF1A", Toast.LENGTH_LONG)
+        successToast = Toast.makeText(context!!, "Ты молодец \uD83C\uDF1A", Toast.LENGTH_LONG)
         this.grid = grid
 
-        this.reset()
+        reset()
 
-        this.grid?.columnCount = this.width!!
-        this.grid?.rowCount = this.height!!
+        grid?.columnCount = this.width!!
+        grid?.rowCount = this.height!!
 
-        this.render()
+        render()
     }
 
     fun setViewportSize(width: Int, height: Int) {
-        this.viewportWidth = width
-        this.viewportHeight = height
+        viewportWidth = width
+        viewportHeight = height
 
-        this.calcButtonsSize()
+        calcButtonsSize()
     }
 
     private fun calcButtonsSize() {
         val screenWidthPx = Resources.getSystem().displayMetrics.widthPixels
-        val buttonWidth = screenWidthPx / this.width!!
-        val buttonHeight = this.viewportHeight / this.height!!
-        for ((_, cell) in this.cells) {
+        val buttonWidth = screenWidthPx / width!!
+        val buttonHeight = viewportHeight / height!!
+        for ((_, cell) in cells) {
             cell.setSize(buttonWidth, buttonHeight)
         }
     }
 
-    private fun disable() {
-        this.isEnabled = false
-    }
-
-    private fun enable() {
-        this.isEnabled = true
-    }
-
     private fun getChars(pairsCount: Int): MutableList<String> {
         val chars = mutableListOf<String>()
-        this.emojis.shuffle()
+        emojis.shuffle()
         val pairsLastIndex = pairsCount - 1
         for (i in 0..pairsLastIndex) {
-            chars.add(this.emojis[i])
-            chars.add(this.emojis[i])
+            chars.add(emojis[i])
+            chars.add(emojis[i])
         }
         chars.shuffle()
         return chars
     }
 
     private fun hideUnmatchedCells() {
-        val unmatchedCells = this.cells.filter { (_, cell) -> !cell.isMatched() }
+        val unmatchedCells = cells.filter { (_, cell) -> !cell.isMatched }
         for ((_, cell) in unmatchedCells) {
             cell.hide()
         }
     }
 
     private fun initCells() {
-        this.grid?.removeAllViews()
-        this.cells.clear()
+        grid?.removeAllViews()
+        cells.clear()
 
         var cellId = 1;
-        for (w in 1..this.width!!) {
-            for (h in 1..this.height!!) {
-                var button = Button(this.context)
+        for (w in 1..width!!) {
+            for (h in 1..height!!) {
+                var button = Button(context)
                 val cell = Cell(
                     cellId,
                     button,
-                    onClick = { id -> this.onCellClick(id) }
+                    onClick = { id -> onCellClick(id) }
                 )
-                this.cells[cellId] = cell
-                this.grid?.addView(button)
+                cells[cellId] = cell
+                grid?.addView(button)
                 cellId++
             }
         }
 
-        this.initChars()
-        this.calcButtonsSize()
+        initChars()
+        calcButtonsSize()
     }
 
     private fun initChars() {
-        val pairsCount = (this.width!! * this.height!!) / 2
-        val chars = this.getChars(pairsCount)
+        val pairsCount = (width!! * height!!) / 2
+        val chars = getChars(pairsCount)
         var charIndex = 0;
-        for ((_, cell) in this.cells) {
-            cell.setChar(chars[charIndex])
+        for ((_, cell) in cells) {
+            cell.char = chars[charIndex]
             charIndex++
         }
     }
 
     private fun onCellClick(cellId: Int) {
-        if (!this.isEnabled) {
+        if (!isEnabled) {
             return
         }
         showCell(cellId)
-        val openedCells = this.cells.filter { (_, cell) -> cell.isVisible() && !cell.isMatched() }
+        val openedCells = cells.filter { (_, cell) -> cell.isVisible && !cell.isMatched }
         val openedCellsChars = mutableSetOf<String>()
-        if (openedCells.size == this.matchTargetCount) {
+        if (openedCells.size == matchTargetCount) {
             for ((_, cell) in openedCells) {
-                openedCellsChars.add(cell.getChar())
+                openedCellsChars.add(cell.char!!)
             }
 
             val isMatched = openedCellsChars.size == 1
@@ -178,26 +170,26 @@ class Field {
                     cell.setMatched()
                 }
             } else {
-                this.disable()
+                isEnabled = false
                 Handler().postDelayed(
                     {
-                        this.hideUnmatchedCells()
-                        this.enable()
+                        hideUnmatchedCells()
+                      isEnabled = true
                     },
                     1000
                 )
             }
         }
 
-        val matchedCells = this.cells.filter { (_, cell) -> cell.isMatched() }
-        if (matchedCells.size == this.cells.size) {
-            this.disable()
-            this.successToast?.show()
+        val matchedCells = cells.filter { (_, cell) -> cell.isMatched }
+        if (matchedCells.size == cells.size) {
+            isEnabled = false
+            successToast?.show()
             Handler().postDelayed(
                 {
-                    this.reset()
-                    this.enable()
-                    this.render()
+                    reset()
+                    isEnabled = true
+                    render()
                 },
                 1000
             )
@@ -206,17 +198,17 @@ class Field {
     }
 
     private fun render() {
-        for ((_, cell) in this.cells) {
+        for ((_, cell) in cells) {
             cell.render()
         }
     }
 
     private fun reset() {
-        this.initCells()
+        initCells()
     }
 
     private fun showCell(cellId: Int) {
-        for ((id, cell) in this.cells) {
+        for ((id, cell) in cells) {
             if (id == cellId) {
                 cell.show()
             }
@@ -224,22 +216,6 @@ class Field {
     }
 
     fun setSize(width: Int, height: Int) {
-        this.init(this.context!!, this.grid!!, width, height)
-    }
-
-    fun getWidth(): Int {
-        return this.width!!
-    }
-
-    fun getHeight(): Int {
-        return this.height!!
-    }
-
-    fun getMaxWidth(): Int {
-        return this.maxWidth!!
-    }
-
-    fun getMaxHeight(): Int {
-        return this.maxHeight!!
+        init(context!!, grid!!, width, height)
     }
 }
