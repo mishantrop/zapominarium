@@ -1,7 +1,7 @@
 package com.quasigames.zapominarium
 
 class Gameplay {
-  var field: Field? = null
+  private var field: Field? = null
 
   fun init(field: Field) {
     this.field = field
@@ -31,23 +31,23 @@ class Gameplay {
   fun increaseComplexity() {
     var width = field?.width!!
     var height = field?.height!!
-    var maxWidth = field?.maxWidth
-    var maxHeight = field?.maxHeight
+    val maxWidth = field?.maxWidth
+    val maxHeight = field?.maxHeight
 
-    if (width!! % 2 != 0 && width!! < maxWidth!!) {
+    if (width % 2 != 0 && width < maxWidth!!) {
       width++
-    } else if (height!! % 2 != 0 && height < maxHeight!!) {
+    } else if (height % 2 != 0 && height < maxHeight!!) {
       height++
-    } else if (height!! > width) {
+    } else if (height > width) {
       width++
     } else {
       height++
     }
 
-    if (width > maxWidth!! || height!! > maxHeight!!) {
+    if (width > maxWidth!! || height > maxHeight!!) {
       return
     }
 
-    field?.setSize(width, height!!)
+    field?.setSize(width, height)
   }
 }

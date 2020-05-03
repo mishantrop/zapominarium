@@ -1,14 +1,14 @@
 package com.quasigames.zapominarium
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.*
-import android.widget.Toast
-import androidx.gridlayout.widget.GridLayout
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.gridlayout.widget.GridLayout
 
 class MainActivity : AppCompatActivity() {
     private var fieldGrid: GridLayout? = null
@@ -18,14 +18,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
 
         setContentView(R.layout.activity_main)
         fieldGrid = findViewById(R.id.activity_main_grid)
 
-        var initialWidth = 3
-        var initialHeight = 4
+        val initialWidth = 3
+        val initialHeight = 4
         val buttonDecreaseComplexity = findViewById<Button>(R.id.buttonDecreaseComplexity)
         val buttonIncreaseComplexity = findViewById<Button>(R.id.buttonIncreaseComplexity)
         val mainLayout = findViewById<LinearLayout>(R.id.activity_main_layout)
@@ -60,15 +61,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun toggleTheme() {
-        val mainLayout = findViewById<LinearLayout>(R.id.activity_main_layout)
-
         isDarkMode = !isDarkMode
 
-        if (isDarkMode) {
-            mainLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.backgroundDark))
-        } else {
-            mainLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.backgroundLight))
-        }
+        setTheme(isDarkMode)
+    }
+
+    private fun setTheme(value: Boolean) {
+      val mainLayout = findViewById<LinearLayout>(R.id.activity_main_layout)
+
+      isDarkMode = value
+
+      if (value) {
+        mainLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.backgroundDark))
+      } else {
+        mainLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.backgroundLight))
+      }
     }
 
     private fun getActionbarHeight(): Int {
@@ -77,6 +84,7 @@ class MainActivity : AppCompatActivity() {
         if (theme.resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
             actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, resources.displayMetrics)
         }
+
         return actionBarHeight
     }
 
@@ -95,5 +103,24 @@ class MainActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+      super.onRestoreInstanceState(savedInstanceState)
+
+      setTheme(savedInstanceState.getBoolean("isDarkMode"))
+
+      field.init(this, fieldGrid!!, savedInstanceState.getInt("field.width"), savedInstanceState.getInt("field.height"))
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+      super.onSaveInstanceState(outState)
+
+      outState.putBoolean("isDarkMode", isDarkMode)
+
+      outState.putInt("field.width", field.width!!)
+      outState.putInt("field.height", field.height!!)
+
+      outState.putAll(outState)
     }
 }
