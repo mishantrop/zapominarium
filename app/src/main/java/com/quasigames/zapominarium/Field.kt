@@ -1,5 +1,6 @@
 package com.quasigames.zapominarium
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
 import android.os.Handler
@@ -57,6 +58,7 @@ class Field {
         "\uD83C\uDF81"  // 🎁 Wrapped Gift
     )
 
+    @SuppressLint("ShowToast")
     fun init(context: Context, grid: GridLayout, width: Int, height: Int) {
         this.context = context
         val pairsCount = (width * height) / matchTargetCount
@@ -66,20 +68,20 @@ class Field {
         if (width % matchTargetCount > 0 && height % matchTargetCount > 0) {
             throw Exception("Count of cells must be even")
         }
-        if (width > maxWidth!! || height > maxHeight!!) {
+        if (width > maxWidth || height > maxHeight) {
             throw Exception("Maximum size: ${maxWidth}x${maxHeight}")
         }
 
         this.width = width
         this.height = height
 
-        successToast = Toast.makeText(context!!, "Ты молодец \uD83C\uDF1A", Toast.LENGTH_LONG)
+        successToast = Toast.makeText(context, "Ты молодец \uD83C\uDF1A", Toast.LENGTH_LONG)
         this.grid = grid
 
         reset()
 
-        grid?.columnCount = this.width!!
-        grid?.rowCount = this.height!!
+        grid.columnCount = this.width!!
+        grid.rowCount = this.height!!
 
         render()
     }
@@ -123,10 +125,10 @@ class Field {
         grid?.removeAllViews()
         cells.clear()
 
-        var cellId = 1;
+        var cellId = 1
         for (w in 1..width!!) {
             for (h in 1..height!!) {
-                var button = Button(context)
+                val button = Button(context)
                 val cell = Cell(
                     cellId,
                     button,
@@ -145,7 +147,7 @@ class Field {
     private fun initChars() {
         val pairsCount = (width!! * height!!) / 2
         val chars = getChars(pairsCount)
-        var charIndex = 0;
+        var charIndex = 0
         for ((_, cell) in cells) {
             cell.char = chars[charIndex]
             charIndex++

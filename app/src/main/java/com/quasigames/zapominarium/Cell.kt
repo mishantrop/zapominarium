@@ -2,21 +2,15 @@ package com.quasigames.zapominarium
 
 import android.widget.Button
 
-class Cell {
+class Cell(id: Int, button: Button, onClick: (id: Int) -> Unit) {
     var char: String? = null
     var isMatched = false
     var isVisible = false
-    private var id: Int? = null
-    private var button: Button? = null
+    private var id: Int? = id
+    private var button: Button? = button
     private var clickCount = 0
 
-    constructor(
-      id: Int,
-      button: Button,
-      onClick: (id: Int) -> Unit
-    ) {
-        this.id = id
-        this.button = button
+    init {
         this.button?.setOnClickListener {
             if (!isVisible) {
                 clickCount++
